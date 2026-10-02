@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>レトロ喫茶 ログ</title>
+  <style>
+    body {
+      background-color: #2b1e1a;
+      color: #f4ecd8;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app-container {
+      width: 360px;
+      height: 600px;
+      background-color: #3d2b1f;
+      border: 4px solid #8b5a2b;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    /* 上部：カウンターとお店の風景 */
+    .counter-area {
+      height: 260px;
+      background-color: #5c3a21;
+      border-radius: 8px;
+      border: 2px solid #8b5a2b;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .speech-bubble {
+      background: #fff8e7;
+      color: #333;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      margin-bottom: 10px;
+      min-height: 20px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .customer {
+      font-size: 50px;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    .counter-table {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 30px;
+      background-color: #3a2212;
+      border-top: 4px solid #8b5a2b;
+    }
+    /* 下部：電卓レジ・入力エリア */
+    .register-area {
+      background-color: #2b1e1a;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #8b5a2b;
+    }
+    .display {
+      background-color: #c2c5a0;
+      color: #222;
+      font-family: monospace;
+      font-size: 18px;
+      padding: 8px;
+      text-align: right;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    input, select {
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #8b5a2b;
+      background: #f4ecd8;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #b85b35;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .submit-btn:hover {
+      background-color: #d96b3d;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- カウンター（客席）画面 -->
+  <div class="counter-area">
+    <div id="bubble" class="speech-bubble">ふぅ、一息つきたいな</div>
+    <div id="customer" class="customer">☕️🧔‍♂️</div>
+    <div class="counter-table"></div>
+  </div>
+
+  <!-- レジ・入力画面 -->
+  <div class="register-area">
+    <div class="display">本日合計: <span id="total">0</span> 円</div>
+    
+    <div class="input-group">
+      <select id="drink">
+        <option value="アイスオレ">アイスオレ</option>
+        <option value="ブレンドコーヒー">ブレンドコーヒー</option>
+        <option value="紅茶">紅茶</option>
+      </select>
+      <input type="number" id="price" value="450" style="width: 80px;"> 円
+    </div>
+
+    <button class="submit-btn" onclick="processOrder()">🛎️ 帳簿に記録する</button>
+  </div>
+</div>
+
+<script>
+  let totalAmount = 0;
+
+  function processOrder() {
+    const drink = document.getElementById('drink').value;
+    const price = parseInt(document.getElementById('price').value) || 0;
+    const customer = document.getElementById('customer');
+    const bubble = document.getElementById('bubble');
+    const totalDisp = document.getElementById('total');
+
+    // 1. レジに記録（チーン！）
+    totalAmount += price;
+    totalDisp.textContent = totalAmount;
+
+    // 2. お客さんがご来店
+    customer.style.opacity = '1';
+    bubble.style.opacity = '1';
+    bubble.textContent = `${drink}ですね。いただきます！`;
+
+    // 3. 2.5秒後にセリフを言って帰っていく
+    setTimeout(() => {
+      bubble.textContent = "美味しかった、これで今日も頑張れそうだ。";
+    }, 2000);
+
+    setTimeout(() => {
+      customer.style.opacity = '0';
+      bubble.style.opacity = '0';
+    }, 4500);
+  }
+</script>
+
+</body>
+</html>
