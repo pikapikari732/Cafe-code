@@ -372,15 +372,18 @@
     localStorage.setItem('cafe_today_total', totalAmount);
     totalDisp.textContent = totalAmount.toLocaleString();
 
-    // ブレンドコーヒーの時は画像、それ以外は絵文字を表示する
-    if (drink === "ブレンドコーヒー") {
-      customer.innerHTML = '<img src="picture/man_coffee.png" class="customer-img">';
-    } else {
-      let drinkIcon = "🥛";
-      if (drink === "クリームソーダ") drinkIcon = "🍹";
-      if (drink === "紅茶") drinkIcon = "🫖";
-      customer.textContent = `${drinkIcon}🧔‍♂️`;
-    }
+   // ドリンクに応じた画像をセットする
+     let imageFile = "picture/man_coffee.png"; // デフォルト（ブレンドコーヒー）
+
+     if (drink === "アイスオレ") {
+       imageFile = "picture/woman_iced latte.png";      // ※実際のファイル名に合わせて調整してください
+     } else if (drink === "クリームソーダ") {
+       imageFile = "picture/man_creamsoda.png";     // ※実際のファイル名に合わせて調整してください
+     } else if (drink === "紅茶") {
+       imageFile = "picture/woman_tea.png";      // ※実際のファイル名に合わせて調整してください
+     }
+
+     customer.innerHTML = `<img src="${imageFile}" class="customer-img">`;
 
     // お客さんの演出表示
     customer.style.opacity = '1';
@@ -390,14 +393,14 @@
     // お客さんの演出表示
     customer.style.opacity = '1';
     bubble.style.opacity = '1';
-    bubble.textContent = `${drink}（${price}円）ですね。いただきます！`;
+    bubble.textContent = `${drink}（${price}円）ですね　いただきます`;
     // 入力数値をリセット
     currentInput = "0";
     updateDisplay();
 
     // 新しいタイマーをセット
     timer1 = setTimeout(() => {
-      bubble.textContent = "ごちそうさま。今日も一日がんばれます。";
+      bubble.textContent = "ごちそうさまでした";
     }, 2000);
 
     timer2 = setTimeout(() => {
