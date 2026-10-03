@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <title>レトロ喫茶 ログ</title>
   <style>
-    body {
+   body {
       background-color: #2b1e1a;
       color: #f4ecd8;
       font-family: sans-serif;
       display: flex;
       justify-content: center;
-      padding: 20px;
+      padding: 10px;
     }
     .app-container {
       width: 360px;
@@ -19,14 +19,16 @@
       border-radius: 12px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding: 16px;
+      gap: 8px;
+      padding: 12px;
       box-sizing: border-box;
     }
-    /* カウンター表示エリア */
+    /* ★ カウンター表示エリア（背景画像を縦長に大きく拡大） */
     .counter-area {
-      height: 200px;
-      background-color: #5c3a21;
+      height: 330px; /* 高さを200px → 330pxに拡大！ */
+      background-image: url('picture/bg_image.webp'); /* 画像のパス */
+      background-size: cover;
+      background-position: center;
       border-radius: 8px;
       border: 2px solid #8b5a2b;
       position: relative;
@@ -34,37 +36,56 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
     }
     .speech-bubble {
       background: #fff8e7;
       color: #333;
-      padding: 8px 12px;
+      padding: 6px 10px;
       border-radius: 12px;
-      font-size: 13px;
-      margin-bottom: 10px;
-      min-height: 18px;
+      font-size: 12px;
+      min-height: 16px;
       opacity: 0;
       transition: opacity 0.3s;
       text-align: center;
-      max-width: 80%;
+      max-width: 85%;
+      position: absolute;
+      top: 15px;       /* 画面の上側に配置 */
+      z-index: 3;      /* 重なり順：一番手前 */
     }
+
+    /* 2. お客さん（テーブルの奥に配置） */
     .customer {
-      font-size: 48px;
+      font-size: 42px;
       opacity: 0;
       transition: opacity 0.5s;
+      position: absolute;
+      bottom: 20px;    /* テーブルのすぐ上に足を合わせる */
+      z-index: 1;      /* 重なり順：奥 */
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+/* おじさん画像用のサイズ設定 */
+    .customer-img {
+      max-height: 260px; /* 画像の高さ（カウンターに合わせて調整OK） */
+      width: auto;
     }
     .counter-table {
       position: absolute;
       bottom: 0;
       width: 100%;
-      height: 24px;
+      height: 35px;    /* カウンターの厚みを少し拡大 */
       background-color: #3a2212;
       border-top: 3px solid #8b5a2b;
+      z-index: 2;      /* 重なり順：おじさんより手前 */
     }
-    /* レジエリア */
+
+    /* ★ レジエリア（全体をコンパクトに縮小） */
     .register-area {
       background-color: #2b1e1a;
-      padding: 12px;
+      padding: 8px;
       border-radius: 8px;
       border: 1px solid #8b5a2b;
     }
@@ -72,44 +93,44 @@
       background-color: #c2c5a0;
       color: #1a1a1a;
       font-family: 'Courier New', monospace;
-      padding: 8px 12px;
+      padding: 4px 8px;
       border-radius: 4px;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
       border: 2px solid #555;
     }
     .display-total {
-      font-size: 12px;
+      font-size: 11px;
       color: #444;
       display: flex;
       justify-content: space-between;
     }
     .display-input {
-      font-size: 24px;
+      font-size: 18px;
       font-weight: bold;
       text-align: right;
     }
     .drink-select {
       width: 100%;
-      padding: 8px;
+      padding: 4px;
       border-radius: 4px;
       border: 1px solid #8b5a2b;
       background: #f4ecd8;
-      font-size: 14px;
-      margin-bottom: 10px;
+      font-size: 12px;
+      margin-bottom: 6px;
     }
     .keypad {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-bottom: 10px;
+      gap: 4px;
+      margin-bottom: 6px;
     }
     .key-btn {
-      padding: 12px;
+      padding: 6px; /* ボタンの高さを小さく */
       background-color: #5c3a21;
       color: #f4ecd8;
       border: 1px solid #8b5a2b;
-      border-radius: 6px;
-      font-size: 16px;
+      border-radius: 4px;
+      font-size: 14px;
       font-weight: bold;
       cursor: pointer;
       box-shadow: 0 2px 0 #2b1e1a;
@@ -123,26 +144,26 @@
     }
     .submit-btn {
       width: 100%;
-      padding: 12px;
+      padding: 8px; /* ボタンの高さを小さく */
       background-color: #b85b35;
       color: white;
       border: none;
       border-radius: 6px;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 3px 0 #7a3a20;
+      box-shadow: 0 2px 0 #7a3a20;
     }
     .submit-btn:active {
-      transform: translateY(3px);
+      transform: translateY(2px);
       box-shadow: none;
     }
     .reset-btn {
-      margin-top: 8px;
+      margin-top: 4px;
       background: none;
       border: none;
       color: #8b5a2b;
-      font-size: 11px;
+      font-size: 10px;
       cursor: pointer;
       text-decoration: underline;
       width: 100%;
@@ -351,14 +372,20 @@
     localStorage.setItem('cafe_today_total', totalAmount);
     totalDisp.textContent = totalAmount.toLocaleString();
 
-    // ドリンクに応じた絵文字を決定する
-    let drinkIcon = "☕️";
-    if (drink === "アイスオレ") drinkIcon = "🥛";
-    if (drink === "クリームソーダ") drinkIcon = "🍹";
-    if (drink === "紅茶") drinkIcon = "🫖";
+    // ブレンドコーヒーの時は画像、それ以外は絵文字を表示する
+    if (drink === "ブレンドコーヒー") {
+      customer.innerHTML = '<img src="picture/man_coffee.png" class="customer-img">';
+    } else {
+      let drinkIcon = "🥛";
+      if (drink === "クリームソーダ") drinkIcon = "🍹";
+      if (drink === "紅茶") drinkIcon = "🫖";
+      customer.textContent = `${drinkIcon}🧔‍♂️`;
+    }
 
-    // お客さんの見た目（ドリンク ＋ おじさん）をセットする
-    customer.textContent = `${drinkIcon}🧔‍♂️`;
+    // お客さんの演出表示
+    customer.style.opacity = '1';
+    bubble.style.opacity = '1';
+    bubble.textContent = `${drink}（${price}円）ですね。いただきます！`;
 
     // お客さんの演出表示
     customer.style.opacity = '1';
