@@ -351,11 +351,19 @@
     localStorage.setItem('cafe_today_total', totalAmount);
     totalDisp.textContent = totalAmount.toLocaleString();
 
+    // ドリンクに応じた絵文字を決定する
+    let drinkIcon = "☕️";
+    if (drink === "アイスオレ") drinkIcon = "🥛";
+    if (drink === "クリームソーダ") drinkIcon = "🍹";
+    if (drink === "紅茶") drinkIcon = "🫖";
+
+    // お客さんの見た目（ドリンク ＋ おじさん）をセットする
+    customer.textContent = `${drinkIcon}🧔‍♂️`;
+
     // お客さんの演出表示
     customer.style.opacity = '1';
     bubble.style.opacity = '1';
     bubble.textContent = `${drink}（${price}円）ですね。いただきます！`;
-
     // 入力数値をリセット
     currentInput = "0";
     updateDisplay();
