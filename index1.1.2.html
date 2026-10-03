@@ -210,6 +210,104 @@
   // 初期化（保存データの表示）
   document.getElementById('total').textContent = totalAmount.toLocaleString();
 
+// ★ ドアの「ガチャッ！」というメカニカルな音 ＋ 2つの重なる金属ベル音
+  function playRegisterSound() {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = audioCtx.currentTime;
+
+    // --- 【ドア・ラッチ部分（ガチャッ！）】 ---
+
+    // 1-1. 「ガッ」：ラッチが触れる瞬間の高音カチャ音
+    const buffer1 = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.04, audioCtx.sampleRate);
+    const data1 = buffer1.getChannelData(0);
+    for (let i = 0; i < data1.length; i++) data1[i] = Math.random() * 2 - 1;
+    
+    const noise1 = audioCtx.createBufferSource();
+    noise1.buffer = buffer1;
+    const filter1 = audioCtx.createBiquadFilter();
+    filter1.type = 'highpass';
+    filter1.frequency.value = 2500; // カチッとした高い金属質感
+
+    const gain1 = audioCtx.createGain();
+    gain1.gain.setValueAtTime(0.5, now);
+    gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+
+    noise1.connect(filter1);
+    filter1.connect(gain1);
+    gain1.connect(audioCtx.destination);
+    noise1.start(now);
+
+    // 1-2. 「チャッ！」：ラッチが奥にハマる主音（0.025秒遅れて発音）
+    const buffer2 = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.07, audioCtx.sampleRate);
+    const data2 = buffer2.getChannelData(0);
+    for (let i = 0; i < data2.length; i++) data2[i] = Math.random() * 2 - 1;
+
+    const noise2 = audioCtx.createBufferSource();
+    noise2.buffer = buffer2;
+    const filter2 = audioCtx.createBiquadFilter();
+    filter2.type = 'bandpass';
+    filter2.frequency.value = 1600; // ドア枠に当たる硬い衝撃音
+
+    const gain2 = audioCtx.createGain();
+    gain2.gain.setValueAtTime(0, now);
+    gain2.gain.setValueAtTime(0.7, now + 0.025);
+    gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.07);
+
+    noise2.connect(filter2);
+    filter2.connect(gain2);
+    gain2.connect(audioCtx.destination);
+    noise2.start(now + 0.025);
+
+    // 1-3. 扉が枠にハマる固いフレーム音（矩形波の短い打撃）
+    const frameOsc = audioCtx.createOscillator();
+    const frameGain = audioCtx.createGain();
+    frameOsc.type = 'square';
+    frameOsc.frequency.setValueAtTime(500, now + 0.02);
+    frameOsc.frequency.exponentialRampToValueAtTime(120, now + 0.06);
+
+    frameGain.gain.setValueAtTime(0, now);
+    frameGain.gain.setValueAtTime(0.3, now + 0.02);
+    frameGain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
+
+    frameOsc.connect(frameGain);
+    frameGain.connect(audioCtx.destination);
+    frameOsc.start(now + 0.02);
+    frameOsc.stop(now + 0.06);
+
+
+    // --- 【ベル部分（２つの重なる余韻音）】 ---
+
+    // 2-1. 【金属ベル音 ①】（1760Hz）
+    const bell1 = audioCtx.createOscillator();
+    const bell1Gain = audioCtx.createGain();
+    bell1.type = 'sine';
+    bell1.frequency.setValueAtTime(1760, now + 0.05);
+
+    bell1Gain.gain.setValueAtTime(0, now);
+    bell1Gain.gain.setValueAtTime(0.3, now + 0.05);
+    bell1Gain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+
+    bell1.connect(bell1Gain);
+    bell1Gain.connect(audioCtx.destination);
+    bell1.start(now + 0.05);
+    bell1.stop(now + 0.85);
+
+    // 2-2. 【金属ベル音 ②】（2217Hz）
+    const bell2 = audioCtx.createOscillator();
+    const bell2Gain = audioCtx.createGain();
+    bell2.type = 'sine';
+    bell2.frequency.setValueAtTime(2217, now + 0.06);
+
+    bell2Gain.gain.setValueAtTime(0, now);
+    bell2Gain.gain.setValueAtTime(0.25, now + 0.06);
+    bell2Gain.gain.exponentialRampToValueAtTime(0.001, now + 0.95);
+
+    bell2.connect(bell2Gain);
+    bell2Gain.connect(audioCtx.destination);
+    bell2.start(now + 0.06);
+    bell2.stop(now + 0.95);
+  }
+
   // テンキー入力処理
   function pressNum(num) {
     if (currentInput === "0" && num !== "00") {
@@ -235,6 +333,9 @@
   function processOrder() {
     const price = parseInt(currentInput);
     if (price === 0) return;
+    
+    // ★ レジのチーン！音を再生
+    playRegisterSound();
 
     const drink = document.getElementById('drink').value;
     const customer = document.getElementById('customer');
